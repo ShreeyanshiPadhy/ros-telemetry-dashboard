@@ -2,6 +2,12 @@
 
 A real-time web-based telemetry dashboard designed for monitoring and interacting with robotic systems. The interface provides live visualization of robot metrics, a terminal-style command console for operator input, and responsive layouts suitable for field technicians using tablets.
 
+
+DISCLAIMER:
+This project includes a built-in telemetry simulator so the dashboard can run without physical robotics hardware.
+The simulator produces mock telemetry data at ~10Hz, allowing users to explore the interface and system behavior.
+If a ROS system with rosbridge_server is available, users can switch the dashboard to ROS mode to receive real robot telemetry.
+
 The system supports both **simulated telemetry streams** and **ROS-integrated robotics systems** via WebSockets.
 
 ---
@@ -110,6 +116,7 @@ React Dashboard Interface
 Telemetry flows from the robot or simulator into the dashboard in real time.
 
 ---
+
 
 # Tech Stack
 
