@@ -48,13 +48,6 @@ console.log("Simulator started")
 io.on("connection", (socket)=>{
     console.log("Client connected")
     socket.emit("mode", telemetryManager.getMode())
-
-    // socket.on("command", (data) => {
-    // console.log("Command received:", command)
-    // telemetryManager.handleCommand(command)
-    // socket.emit("log", `Executed: ${command}`)
-    // })
-
     socket.on("setTelemetryMode",(mode)=>{
         telemetryManager.setMode(mode,pipelines)
         io.emit("mode", mode)

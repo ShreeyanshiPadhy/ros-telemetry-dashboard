@@ -32,48 +32,49 @@ function App() {
   socket.emit("setTelemetryMode", mode)
 }
   useEffect(()=>{
-    socket.on("mode",(mode)=>{
-      setTelemetryMode(mode)
 
-      setTelemetry({
-    batteryLevel: 0,
-    temperature: 0,
-    speed: 0,
-    motorCurrent: 0,
-    robotState: "IDLE"
-  })
-  
-      setDataPoints([])
-      setTimeIndex(0)
-      setTelemetry(null)
-      packetCount.current = 0
-      setStreamRate(0)
-
-      
+  const handleMode = (mode) => {
+    setTelemetryMode(mode)
+    setTelemetry({
+      batteryLevel: 0,
+      temperature: 0,
+      speed: 0,
+      motorCurrent: 0,
+      robotState: "IDLE"
     })
-    socket.on("message",(data)=>{
-      packetCount.current +=1
-      setTelemetry(data)
-      setTimeIndex(prev=>prev+1)
-      setDataPoints(prev=>{
-        const updated = [...prev,data.motorCurrent]
+    setDataPoints([])
+    setTimeIndex(0)
+    setTelemetry(null)
+    packetCount.current = 0
+    setStreamRate(0)
+  }
 
-        if(updated.length>75){
-          updated.shift()
-        }
-        return updated
-      })
+  const handleMessage = (data) => {
+    packetCount.current += 1
+    setTelemetry(data)
+    setTimeIndex(prev => prev + 1)
+    setDataPoints(prev => {
+      const updated = [...prev, data.motorCurrent]
+      if(updated.length > 75){
+        updated.shift()
+      }
+      return updated
     })
+  }
 
-    return()=>{
-      socket.off("message")
-    }
-  },[])
+  socket.on("mode", handleMode)
+  socket.on("message", handleMessage)
+
+  return () => {
+    socket.off("mode", handleMode)
+    socket.off("message", handleMessage)
+  }
+
+}, [])
 
   useEffect(()=>{
     console.log("Current data points:",dataPoints) 
   },[dataPoints])
-
   const chartData={
     labels: dataPoints.map((_,i)=>timeIndex - dataPoints.length +i+1),
     datasets: [
@@ -97,8 +98,9 @@ function App() {
     }
   },[])
 
-  const chartOptions = {
+const chartOptions = {
   responsive: true,
+  maintainAspectRatio: false,
   animation: false,
 
   interaction: {
@@ -134,7 +136,7 @@ function App() {
       }
     }
   }
-}
+};
 
 return (
   <DashboardUI

@@ -14,7 +14,7 @@ export default function TelemetryGraph({ chartRef, chartData, chartOptions }) {
           </p>
         </div>
       </div>
-      <div className="h-[300px]">
+      <div className="h-[360px]">
         <Line ref={chartRef} data={chartData} options={chartOptions}/>
       </div>
     </section>

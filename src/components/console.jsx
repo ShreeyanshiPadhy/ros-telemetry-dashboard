@@ -2,9 +2,7 @@ import { useState, useRef, useEffect } from "react"
 import socket from "../socket"
 
 export default function Console({ mode }) {
-
   const [command, setCommand] = useState("")
-
   const [logsByMode, setLogsByMode] = useState({
     simulator: [
       "[SYSTEM] Simulator console initialized"
@@ -15,13 +13,10 @@ export default function Console({ mode }) {
   })
 
   const logContainerRef = useRef(null)
-
   const logs = logsByMode[mode] || []
-
   const handleCommand = (e) => {
     e.preventDefault()
     if (!command.trim() || !mode) return
-    
     setLogsByMode(prev => ({
       ...prev,
       [mode]: [...(prev[mode] || []), `> ${command}`]
@@ -49,52 +44,54 @@ export default function Console({ mode }) {
   }, [mode])
 
   return (
-    <section className="flex-1 bg-surface-container-lowest border-l-2 border-primary/40 p-4 font-mono text-xs flex flex-col overflow-hidden">
-      <div className="flex justify-between items-center mb-3 text-primary/60 border-b border-outline-variant/10 pb-2">
-
-        <span className="text-[10px] tracking-widest">
+    <section className="flex flex-col h-full bg-[#05080f] border border-gray-700 rounded-md overflow-hidden font-mono text-xs">
+      {/* HEADER */}
+      <div className="flex justify-between items-center px-3 py-2 border-b border-gray-700 bg-[#0b0f16]">
+        <span className="tracking-widest text-cyan-400 text-[11px]">
           COMMAND_CONSOLE_V4.2 [{mode ? mode.toUpperCase() : "NO MODE"}]
         </span>
-
         <div className="flex gap-2">
-          <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
-          <div className="w-2 h-2 rounded-full bg-yellow-500/50"></div>
-          <div className="w-2 h-2 rounded-full bg-green-500/50"></div>
+          <div className="w-2 h-2 rounded-full bg-red-500/60"></div>
+          <div className="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+          <div className="w-2 h-2 rounded-full bg-green-500/60"></div>
         </div>
-
       </div>
 
-      {/* Scrollable log area */}
+      {/* LOG AREA */}
       <div
         ref={logContainerRef}
-        className="h-[140px] overflow-y-auto space-y-1 mb-3 text-on-surface-variant pr-2"
+        className="flex-1 overflow-y-auto px-3 py-2 space-y-1 text-gray-300"
       >
         {logs.map((log, i) => (
-          <div key={i} className="leading-5">
+          <div
+            key={i}
+            className={`
+              leading-5
+              ${log.includes("ERROR") ? "text-red-400" : ""}
+              ${log.includes("WARN") ? "text-yellow-400" : ""}
+              ${log.includes("INFO") ? "text-cyan-400" : ""}
+            `}
+          >
             {log}
           </div>
-        ))}
-      </div>
 
-      {/* Command Input */}
+        ))}
+
+      </div>
+      {/* INPUT BAR */}
       <form
         onSubmit={handleCommand}
-        className="bg-surface-container-low p-2 flex items-center gap-2 border border-outline-variant/20"
+        className="flex items-center gap-2 px-3 py-2 border-t border-gray-700 bg-[#0b0f16]"
       >
-
-        <span className="text-primary font-bold">{">"}</span>
-
+        <span className="text-cyan-400 font-bold">{">"}</span>
         <input
           value={command}
           onChange={(e) => setCommand(e.target.value)}
-          className="bg-transparent border-none outline-none text-primary w-full placeholder:text-primary/20"
-          placeholder="ENTER_SYSTEM_COMMAND..."
+          className="flex-1 bg-transparent outline-none text-gray-200 placeholder-gray-500"
+          placeholder="ENTER SYSTEM COMMAND..."
         />
-
-        <span className="w-[6px] h-[14px] bg-primary animate-pulse"></span>
-
+        <span className="w-[6px] h-[14px] bg-cyan-400 animate-pulse"></span>
       </form>
-
     </section>
   )
 }
