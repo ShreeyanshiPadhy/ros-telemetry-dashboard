@@ -47,15 +47,14 @@ function RobotState({state}){
 
     <section className="bg-surface-container p-6 flex flex-col gap-6">
 
-      <Metric label="BATTERY" value={`${telemetry.batteryLevel.toFixed(2)}%`} />
+      <Metric label="BATTERY" value={`${telemetry.batteryLevel?.toFixed?.(2) ?? "0.00"}%`} />
 
-      <Metric label="TEMPERATURE" value={`${telemetry.temperature.toFixed(2)}°C`} />
+<Metric label="TEMPERATURE" value={`${telemetry.temperature?.toFixed?.(2) ?? "0.00"}°C`} />
 
-      <Metric label="SPEED" value={`${telemetry.speed.toFixed(2)} m/s`} />
+<Metric label="SPEED" value={`${telemetry.speed?.toFixed?.(2) ?? "0.00"} m/s`} />
 
-      <Metric label="MOTOR CURRENT" value={`${telemetry.motorCurrent.toFixed(2)} A`} />
-
-      <RobotState state={telemetry.robotState} />
+<Metric label="MOTOR CURRENT" value={`${telemetry.motorCurrent?.toFixed?.(2) ?? "0.00"} A`} />
+      <RobotState state={telemetry.robotState ?? "IDLE"} />
 
     </section>
 

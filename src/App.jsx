@@ -1,10 +1,10 @@
 import socket from './socket'
+import zoomPlugin from "chartjs-plugin-zoom"
 import DashboardUI from "./components/DashboardLayout"
 import TelemetryGraph from "./components/TelemetryGraph"
 import StatusPanel from "./components/StatusPanel"
 import Console from "./components/console"
 import {useEffect,useState,useRef} from 'react'
-import './App.css'
 import {
   Chart as ChartJS,
   LineElement,
@@ -16,6 +16,9 @@ import {
 ChartJS.register(
   LineElement,PointElement,LinearScale,CategoryScale
 )
+
+ChartJS.register(zoomPlugin)
+
 function App() {
   window.socket = socket
   const [timeIndex, setTimeIndex] = useState(0)
@@ -23,6 +26,7 @@ function App() {
   const [telemetryMode, setTelemetryMode] = useState(null)
   const [telemetry, setTelemetry] = useState(null)
   const packetCount = useRef(0)
+  const chartRef = useRef(null)
   const [streamRate, setStreamRate] = useState(0)
   const changeMode = (mode) => {
   socket.emit("setTelemetryMode", mode)
@@ -93,14 +97,50 @@ function App() {
     }
   },[])
 
-  const chartOptions={
-    animation:false
+  const chartOptions = {
+  responsive: true,
+  animation: false,
+
+  interaction: {
+    mode: "index",
+    intersect: false
+  },
+
+  plugins: {
+    tooltip: {
+      enabled: true
+    },
+
+    legend: {
+      display: true
+    },
+
+    zoom: {
+      pan: {
+        enabled: true,
+        mode: "x"
+      },
+
+      zoom: {
+        wheel: {
+          enabled: true
+        },
+
+        pinch: {
+          enabled: true
+        },
+
+        mode: "x"
+      }
+    }
   }
+}
 
 return (
   <DashboardUI
     graph={
       <TelemetryGraph
+        chartRef={chartRef}
         chartData={chartData}
         chartOptions={chartOptions}
       />
@@ -110,6 +150,7 @@ return (
     changeMode={changeMode}
     mode={telemetryMode}
     streamRate={streamRate}
+    chartRef={chartRef}
   />
 )
 }

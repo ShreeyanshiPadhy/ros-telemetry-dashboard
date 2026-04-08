@@ -1,4 +1,4 @@
-function DashboardUI({ graph, statusPanel, consolePanel,changeMode,mode, streamRate  }) {
+function DashboardUI({ graph, statusPanel, consolePanel,changeMode,mode, streamRate, chartRef }) {
   return (
     <>
     <main className="flex flex-col lg:p-6 pb-32 flex-1 p-6 gap-6 max-w-[1600px] mx-auto w-full">
@@ -30,7 +30,6 @@ function DashboardUI({ graph, statusPanel, consolePanel,changeMode,mode, streamR
 
 </div>
       </header>
-
       <nav className="flex gap-8 mb-2 border-b border-white/5 px-2">
         <button
   onClick={() => changeMode("simulator")}
@@ -46,9 +45,14 @@ function DashboardUI({ graph, statusPanel, consolePanel,changeMode,mode, streamR
   ROS BRIDGE
 </button>
       </nav>
-
       <div className="flex-[2] flex gap-6 overflow-hidden flex-col lg:flex-row">
         <section className="flex-[3] bg-surface-container p-8 relative overflow-hidden">
+          <button
+  onClick={() => chartRef?.current?.resetZoom()}
+  className="absolute top-4 right-4 text-xs font-mono text-primary"
+>
+  Reset Zoom
+</button>
           <div className="flex-1">
             {graph}
           </div>
@@ -68,23 +72,11 @@ function DashboardUI({ graph, statusPanel, consolePanel,changeMode,mode, streamR
     {/* MOBILE FOOTER */}
 {/* MOBILE SYSTEM STATUS FOOTER */}
 <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-cyan-700 lg:hidden">
-
   <div className="text-xs font-mono text-cyan-400 px-4 py-2 space-y-1">
-
-    <div>
-      SYSTEM_STATUS: CONNECTED
-    </div>
-
-    <div>
-      DATA_SOURCE: {mode ? mode.toUpperCase() : "UNKNOWN"}
-    </div>
-
-    <div>
-      STREAM_RATE: {streamRate} Hz
-    </div>
-
+    <div>SYSTEM_STATUS: CONNECTED</div>
+    <div>DATA_SOURCE: {mode ? mode.toUpperCase() : "UNKNOWN"}</div>
+    <div>STREAM_RATE: {streamRate} Hz</div>
   </div>
-
 </div>
     </>
   )

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react"
+import socket from "../socket"
 
 export default function Console({ mode }) {
 
@@ -19,9 +20,8 @@ export default function Console({ mode }) {
 
   const handleCommand = (e) => {
     e.preventDefault()
-
     if (!command.trim() || !mode) return
-
+    
     setLogsByMode(prev => ({
       ...prev,
       [mode]: [...(prev[mode] || []), `> ${command}`]
@@ -30,7 +30,6 @@ export default function Console({ mode }) {
     setCommand("")
   }
 
-  // auto-scroll to newest log
   useEffect(() => {
     if (logContainerRef.current) {
       logContainerRef.current.scrollTop =
@@ -38,10 +37,19 @@ export default function Console({ mode }) {
     }
   }, [logs])
 
+  useEffect(() => {
+    const handleLog = (log) => {
+      setLogsByMode(prev => ({
+        ...prev,
+        [mode]: [...(prev[mode] || []), log]
+      }))
+    }
+    socket.on("log", handleLog)
+    return () => socket.off("log", handleLog)
+  }, [mode])
+
   return (
     <section className="flex-1 bg-surface-container-lowest border-l-2 border-primary/40 p-4 font-mono text-xs flex flex-col overflow-hidden">
-
-      {/* Terminal Header */}
       <div className="flex justify-between items-center mb-3 text-primary/60 border-b border-outline-variant/10 pb-2">
 
         <span className="text-[10px] tracking-widest">
